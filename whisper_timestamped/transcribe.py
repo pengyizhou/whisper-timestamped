@@ -297,8 +297,8 @@ def transcribe_timestamped(
     else:
         vad_segments = None
     
-    global num_alignment_for_plot
-    num_alignment_for_plot = 0
+    # global num_alignment_for_plot
+    # num_alignment_for_plot = 0
 
     if naive_approach:
         (transcription, words) = _transcribe_timestamped_naive(model, audio,
@@ -1381,7 +1381,7 @@ def get_logit_filters(model, whisper_options, prompt = None):
     if prompt is not None:
         decoding_options["prompt"] = prompt
     decoding_options = whisper.DecodingOptions(
-        without_timestamps=False,
+        without_timestamps=True,
         max_initial_timestamp=1.0,
         prefix=None,
         suppress_blank=True,
@@ -1580,8 +1580,8 @@ def perform_word_alignment(
         ))
     alignment = dtw.dtw(weights, step_pattern=step_pattern)
 
-    global num_alignment_for_plot
-    num_alignment_for_plot += 1
+    # global num_alignment_for_plot
+    # num_alignment_for_plot += 1
 
     if plot:
         import matplotlib.pyplot as plt
@@ -1776,9 +1776,10 @@ def perform_word_alignment(
                     plt.axvline(x * 2 / AUDIO_TIME_PER_TOKEN, color="red", linestyle="dotted")
 
         if isinstance(plot, str):
-            plt.savefig(f"{plot}.alignment{num_alignment_for_plot:03d}.jpg", bbox_inches='tight', pad_inches=0)
+            plt.savefig(f"{plot}.alignment.png", bbox_inches='tight', pad_inches=0)
         else:
-            plt.show()
+            plt.savefig(f"time.alignment.png", bbox_inches='tight', pad_inches=0)
+        plt.close()
 
     return [
         dict(
@@ -2146,9 +2147,10 @@ def remove_non_speech(audio,
         for s, e in segments:
             plt.axvspan(s/sample_rate, e/sample_rate, color='red', alpha=0.1)
         if isinstance(plot, str):
-            plt.savefig(f"{plot}.VAD.jpg", bbox_inches='tight', pad_inches=0)
+            plt.savefig(f"{plot}.VAD.png", bbox_inches='tight', pad_inches=0)
         else:
-            plt.show()
+            plt.savefig("time.VAD.png", bbox_inches='tight', pad_inches=0)
+        plt.close()
 
     if not use_sample:
         segments = [(float(s)/sample_rate, float(e)/sample_rate) for s,e in segments]
